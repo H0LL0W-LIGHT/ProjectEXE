@@ -1,7 +1,9 @@
+using Lumina.Domain.Entities;
 using Lumina.Infrastructure.Data;
 using Lumina.Infrastructure.Repositories;
 using Lumina.Infrastructure.Repositories.Interfaces;
 using Lumina.Infrastructure.UnitOfWork;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lumina
@@ -12,7 +14,7 @@ namespace Lumina
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            //config DbContext
+            // Config DbContext
             var connectionString = builder.Configuration.GetConnectionString("connectionString");
 
             builder.Services.AddDbContext<LuminaDbContext>(options =>
@@ -20,15 +22,41 @@ namespace Lumina
                 options.UseSqlServer(connectionString);
             });
 
-            //register UnitOfWork
+            // Register UnitOfWork
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-            //register service
+
+            // Register services
             builder.Services.AddScoped<IAppUserRepository, AppUserRepository>();
             builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
 
-
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddIdentity<AppUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddEntityFrameworkStores<LuminaDbContext>()  // Use LuminaDbContext here
+                .AddDefaultTokenProviders();
+
+            builder.Services.Configure<IdentityOptions>(options =>
+            {
+                // Password settings.
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequiredLength = 8;
+                options.Password.RequiredUniqueChars = 1;
+
+                // Lockout settings.
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.AllowedForNewUsers = true;
+                options.SignIn.RequireConfirmedEmail = false;
+
+                // User settings.
+                options.User.AllowedUserNameCharacters =
+                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                options.User.RequireUniqueEmail = true;
+            });
 
             var app = builder.Build();
 
@@ -45,6 +73,7 @@ namespace Lumina
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
