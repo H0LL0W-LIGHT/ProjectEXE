@@ -7,14 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Admin\Controllers\" />
-    <Folder Include="Areas\Admin\Models\" />
-    <Folder Include="Areas\Admin\Views\" />
+    <ProjectReference Include="..\Lumina.Domain\Lumina.Domain.csproj" />
+    <ProjectReference Include="..\Lumina.Services\Lumina.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lumina.Domain\Lumina.Domain.csproj" />
-    <ProjectReference Include="..\Lumina.Services\Lumina.Services.csproj" />
+    <Folder Include="Areas\Admin\Models\" />
   </ItemGroup>
 
 </Project>

@@ -2,12 +2,12 @@
 
 namespace Lumina.Infrastructure.UnitOfWork
 {
-    public interface IUnitOfWork
-    {
-        IAppUserRepository AppUserRepository { get; }
-        IProfileRepository ProfileRepository { get; }
+	public interface IUnitOfWork
+	{
+		IAppUserRepository AppUserRepository { get; }
+		IProfileRepository ProfileRepository { get; }
 
-        void Commit();
-        void Rollback();
-    }
+		Task CommitAsync();
+		Task RollbackAsync();
+	}
 }

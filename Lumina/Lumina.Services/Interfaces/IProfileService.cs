@@ -2,12 +2,12 @@
 
 namespace Lumina.Services.Interfaces
 {
-    public interface IProfileService
-    {
-        IEnumerable<Profile> GetAll();
-        Profile Get(string id);
-        void Insert(Profile profile);
-        void Update(Profile profile);
-        void Delete(string id);
-    }
+	public interface IProfileService
+	{
+		Task<IEnumerable<Profile>> GetAllAsync();
+		Task<Profile> GetAsync(string id);
+		Task InsertAsync(Profile profile);
+		Task UpdateAsync(Profile profile);
+		Task DeleteAsync(string id);
+	}
 }

@@ -2,12 +2,12 @@
 
 namespace Lumina.Services.Interfaces
 {
-    public interface IAppUserService
-    {
-        IEnumerable<AppUser> GetAll();
-        AppUser Get(string id);
-        void Insert(AppUser appUser);
-        void Update(AppUser appUser);
-        void Delete(string id);
-    }
+	public interface IAppUserService
+	{
+		Task<IEnumerable<AppUser>> GetAllAsync();
+		Task<AppUser> GetAsync(string id);
+		Task InsertAsync(AppUser appUser);
+		Task UpdateAsync(AppUser appUser);
+		Task DeleteAsync(string id);
+	}
 }

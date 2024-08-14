@@ -3,62 +3,68 @@ using Lumina.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace JustBlog.Infrastructure
+public class GenericRepository<T> : IGenericRepository<T> where T : class
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : class
-    {
-        protected readonly LuminaDbContext _dbContext;
-        private readonly DbSet<T> _entitySet;
+	protected readonly LuminaDbContext _dbContext;
+	private readonly DbSet<T> _entitySet;
 
-        public GenericRepository(LuminaDbContext dbContext)
-        {
-            _dbContext = dbContext;
-            _entitySet = _dbContext.Set<T>();
-        }
+	public GenericRepository(LuminaDbContext dbContext)
+	{
+		_dbContext = dbContext;
+		_entitySet = _dbContext.Set<T>();
+	}
 
-        public void Add(T entity)
-        {
-            _dbContext.Add(entity);
-        }
+	public async Task AddAsync(T entity)
+	{
+		await _entitySet.AddAsync(entity);
+	}
 
-        public void AddRange(IEnumerable<T> entities)
-        {
-            _dbContext.AddRange(entities);
-        }
+	public async Task AddRangeAsync(IEnumerable<T> entities)
+	{
+		await _entitySet.AddRangeAsync(entities);
+	}
 
-        public T Get(Expression<Func<T, bool>> expression)
-        {
-            return _entitySet.FirstOrDefault(expression);
-        }
+	public async Task<T> GetAsync(Expression<Func<T, bool>> expression)
+	{
+		return await _entitySet.FirstOrDefaultAsync(expression);
+	}
 
-        public IEnumerable<T> GetAll()
-        {
-            return _entitySet.AsEnumerable();
-        }
+	public async Task<IEnumerable<T>> GetAllAsync()
+	{
+		return await _entitySet.AsNoTracking().ToListAsync();
+	}
 
-        public IEnumerable<T> GetAll(Expression<Func<T, bool>> expression)
-        {
-            return _entitySet.Where(expression).AsEnumerable();
-        }
+	public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> expression)
+	{
+		return await _entitySet.Where(expression).AsNoTracking().ToListAsync();
+	}
 
-        public void Remove(T entity)
-        {
-            _dbContext.Remove(entity);
-        }
+	public async Task UpdateAsync(T entity)
+	{
+		_entitySet.Update(entity);
+		await _dbContext.SaveChangesAsync();
+	}
 
-        public void RemoveRange(IEnumerable<T> entities)
-        {
-            _dbContext.RemoveRange(entities);
-        }
+	public async Task UpdateRangeAsync(IEnumerable<T> entities)
+	{
+		_entitySet.UpdateRange(entities);
+		await _dbContext.SaveChangesAsync();
+	}
 
-        public void Update(T entity)
-        {
-            _dbContext.Update(entity);
-        }
+	public async Task RemoveAsync(T entity)
+	{
+		_entitySet.Remove(entity);
+		await _dbContext.SaveChangesAsync();
+	}
 
-        public void UpdateRange(IEnumerable<T> entities)
-        {
-            _dbContext.UpdateRange(entities);
-        }
-    }
+	public async Task RemoveRangeAsync(IEnumerable<T> entities)
+	{
+		_entitySet.RemoveRange(entities);
+		await _dbContext.SaveChangesAsync();
+	}
+
+	public async Task<int> SaveChangesAsync()
+	{
+		return await _dbContext.SaveChangesAsync();
+	}
 }

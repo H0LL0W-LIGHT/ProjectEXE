@@ -4,45 +4,46 @@ using Lumina.Services.Interfaces;
 
 namespace Lumina.Services
 {
-    public class ProfileService : IProfileService
-    {
-        private readonly IUnitOfWork _unitOfWork;
-        public ProfileService(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-        }
+	public class ProfileService : IProfileService
+	{
+		private readonly IUnitOfWork _unitOfWork;
 
-        public void Delete(string id)
-        {
-            var profile = _unitOfWork.ProfileRepository.Get(c => c.AppUserId == id);
+		public ProfileService(IUnitOfWork unitOfWork)
+		{
+			_unitOfWork = unitOfWork;
+		}
 
-            if (profile != null)
-            {
-                _unitOfWork.ProfileRepository.Remove(profile);
-                _unitOfWork.Commit();
-            }
-        }
+		public async Task<Profile> GetAsync(string id)
+		{
+			return await _unitOfWork.ProfileRepository.GetAsync(c => c.AppUserId == id);
+		}
 
-        public Profile Get(string id)
-        {
-            return _unitOfWork.ProfileRepository.Get(c => c.AppUserId == id);
-        }
+		public async Task<IEnumerable<Profile>> GetAllAsync()
+		{
+			return await _unitOfWork.ProfileRepository.GetAllAsync();
+		}
 
-        public IEnumerable<Profile> GetAll()
-        {
-            return _unitOfWork.ProfileRepository.GetAll();
-        }
+		public async Task InsertAsync(Profile profile)
+		{
+			await _unitOfWork.ProfileRepository.AddAsync(profile);
+			await _unitOfWork.CommitAsync();
+		}
 
-        public void Insert(Profile profile)
-        {
-            _unitOfWork.ProfileRepository.Add(profile);
-            _unitOfWork.Commit();
-        }
+		public async Task UpdateAsync(Profile profile)
+		{
+			await _unitOfWork.ProfileRepository.UpdateAsync(profile);
+			await _unitOfWork.CommitAsync();
+		}
 
-        public void Update(Profile profile)
-        {
-            _unitOfWork.ProfileRepository.Update(profile);
-            _unitOfWork.Commit();
-        }
-    }
+		public async Task DeleteAsync(string id)
+		{
+			var profile = await _unitOfWork.ProfileRepository.GetAsync(c => c.AppUserId == id);
+
+			if (profile != null)
+			{
+				await _unitOfWork.ProfileRepository.RemoveAsync(profile);
+				await _unitOfWork.CommitAsync();
+			}
+		}
+	}
 }

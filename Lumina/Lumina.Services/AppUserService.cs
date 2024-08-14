@@ -4,45 +4,46 @@ using Lumina.Services.Interfaces;
 
 namespace Lumina.Services
 {
-    public class AppUserService : IAppUserService
-    {
-        private readonly IUnitOfWork _unitOfWork;
-        public AppUserService(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-        }
+	public class AppUserService : IAppUserService
+	{
+		private readonly IUnitOfWork _unitOfWork;
 
-        public void Delete(string id)
-        {
-            var appUser = _unitOfWork.AppUserRepository.Get(c => c.Id == id);
+		public AppUserService(IUnitOfWork unitOfWork)
+		{
+			_unitOfWork = unitOfWork;
+		}
 
-            if (appUser != null)
-            {
-                _unitOfWork.AppUserRepository.Remove(appUser);
-                _unitOfWork.Commit();
-            }
-        }
+		public async Task DeleteAsync(string id)
+		{
+			var appUser = await _unitOfWork.AppUserRepository.GetAsync(c => c.Id == id);
 
-        public AppUser Get(string id)
-        {
-            return _unitOfWork.AppUserRepository.Get(c => c.Id == id);
-        }
+			if (appUser != null)
+			{
+				_unitOfWork.AppUserRepository.RemoveAsync(appUser);
+				await _unitOfWork.CommitAsync();
+			}
+		}
 
-        public IEnumerable<AppUser> GetAll()
-        {
-            return _unitOfWork.AppUserRepository.GetAll();
-        }
+		public async Task<AppUser> GetAsync(string id)
+		{
+			return await _unitOfWork.AppUserRepository.GetAsync(c => c.Id == id);
+		}
 
-        public void Insert(AppUser appUser)
-        {
-            _unitOfWork.AppUserRepository.Add(appUser);
-            _unitOfWork.Commit();
-        }
+		public async Task<IEnumerable<AppUser>> GetAllAsync()
+		{
+			return await _unitOfWork.AppUserRepository.GetAllAsync();
+		}
 
-        public void Update(AppUser appUser)
-        {
-            _unitOfWork.AppUserRepository.Update(appUser);
-            _unitOfWork.Commit();
-        }
-    }
+		public async Task InsertAsync(AppUser appUser)
+		{
+			await _unitOfWork.AppUserRepository.AddAsync(appUser);
+			await _unitOfWork.CommitAsync();
+		}
+
+		public async Task UpdateAsync(AppUser appUser)
+		{
+			_unitOfWork.AppUserRepository.UpdateAsync(appUser);
+			await _unitOfWork.CommitAsync();
+		}
+	}
 }
