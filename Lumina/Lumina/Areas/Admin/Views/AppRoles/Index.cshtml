@@ -1,13 +1,10 @@
-﻿@model IEnumerable<AppUser>
+﻿@using Microsoft.AspNetCore.Identity
+@model IEnumerable<IdentityRole>
 @{
-	ViewData["Title"] = "List User";
+	ViewData["Title"] = "List Role";
 	Paginate pager = new Paginate();
 	int pageNo = 0;
-	if(ViewBag.Pager != null)
-	{
-		pager = ViewBag.Pager;
-		pageNo = pager.CurrentPage;
-	}
+	
 }
 
 <!DOCTYPE html>
@@ -17,7 +14,7 @@
 	<title>Index</title>
 </head>
 <body>
-	<h3>List User</h3>
+	<h3>List Role</h3>
 
 	<a class="btn btn-primary" asp-action="Register" asp-controller="User">Add User</a>
 	<table class="table">
@@ -36,9 +33,6 @@
 			{
 				<tr>
 					<td>@user.Id</td>
-					<td>@user.UserName</td>
-					<td>@user.Email</td>
-					<td>@user.PhoneNumber</td>
 					<td></td>
 					<td>
 						<a class="btn btn-warning btn-sm" asp-action="Edit" asp-controller="User" asp-route-Id="@user.Id">Edit</a>
@@ -48,6 +42,5 @@
 			}
 		</tbody>
 	</table>
-	@await Html.PartialAsync("_Paging", pager)
 </body>
 </html>

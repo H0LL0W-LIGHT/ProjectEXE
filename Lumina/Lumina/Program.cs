@@ -10,7 +10,7 @@ namespace Lumina
 {
 	public class Program
 	{
-		public static void Main(string[] args)
+		public static async Task Main(string[] args)
 		{
 			var builder = WebApplication.CreateBuilder(args);
 
@@ -59,6 +59,14 @@ namespace Lumina
 			});
 
 			var app = builder.Build();
+
+			// Seed roles and admin user
+			using (var scope = app.Services.CreateScope())
+			{
+				var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+				var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+				await LuminaSeedData.SeedRolesAndAdminUser(roleManager, userManager);
+			}
 
 			// Configure the HTTP request pipeline.
 			if (!app.Environment.IsDevelopment())

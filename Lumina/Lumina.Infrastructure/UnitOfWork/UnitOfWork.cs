@@ -1,6 +1,8 @@
-﻿using Lumina.Infrastructure.Data;
+﻿using Lumina.Domain.Entities;
+using Lumina.Infrastructure.Data;
 using Lumina.Infrastructure.Repositories;
 using Lumina.Infrastructure.Repositories.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace Lumina.Infrastructure.UnitOfWork
 {
@@ -10,10 +12,19 @@ namespace Lumina.Infrastructure.UnitOfWork
 
 		private IAppUserRepository _appUserRepository;
 		private IProfileRepository _profileRepository;
+		private IRoleRepository _roleRepository;
+		private readonly RoleManager<IdentityRole> _roleManager;
+		private readonly UserManager<AppUser> _userManager;
 
-		public UnitOfWork(LuminaDbContext dbContext)
+
+		public UnitOfWork(
+			LuminaDbContext dbContext,
+			RoleManager<IdentityRole> roleManager,
+			UserManager<AppUser> userManager)
 		{
 			_dbContext = dbContext;
+			_roleManager = roleManager;
+			_userManager = userManager;
 		}
 
 		public IAppUserRepository AppUserRepository
@@ -29,6 +40,14 @@ namespace Lumina.Infrastructure.UnitOfWork
 			get
 			{
 				return _profileRepository = _profileRepository ?? new ProfileRepository(_dbContext);
+			}
+		}
+
+		public IRoleRepository RoleRepository
+		{
+			get
+			{
+				return _roleRepository = _roleRepository ?? new RoleRepository(_dbContext);
 			}
 		}
 

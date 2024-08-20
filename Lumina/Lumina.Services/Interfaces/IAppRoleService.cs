@@ -2,7 +2,7 @@
 
 namespace Lumina.Services.Interfaces
 {
-	public interface IAppUserService
+	public interface IAppRoleService
 	{
 		Task<IEnumerable<AppUser>> GetAllAsync();
 		Task<AppUser> GetAsync(string id);

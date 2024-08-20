@@ -6,6 +6,7 @@ namespace Lumina.Infrastructure.UnitOfWork
 	{
 		IAppUserRepository AppUserRepository { get; }
 		IProfileRepository ProfileRepository { get; }
+		IRoleRepository RoleRepository { get; }
 
 		Task CommitAsync();
 		Task RollbackAsync();
